@@ -68,9 +68,14 @@ class FloodPointer {
 
 	func directions() -> [ScanDirection] {
 		if baseDirection == 6 {
-			return [0,1,2,3,4,5]
+			return [0,1,2,3,4,5].shuffle()
 		}
-		return [baseDirection,(baseDirection+1)%6,(baseDirection+5)%6]	//	+5 equals -1
+		
+		if ( Random.integer(2) == 0 ) {
+			return [baseDirection,(baseDirection+1)%6,(baseDirection+5)%6]	//	+5 equals -1
+		} else {
+			return [baseDirection,(baseDirection+5)%6,(baseDirection+1)%6]	//	+5 equals -1
+		}
 	}
 	
 	
@@ -120,18 +125,19 @@ class Light : SKShapeNode {
 			for direction in directions {
 				let pos = fp.neighbour(direction)
 				let strength = fp.strength
-//				let dirFactor = strength * (direction == fp.baseDirection ? 0.5 : 0.5 )
+				let dirFactor = strength * (direction == fp.baseDirection ? 1.5 : 0.7 )
 				if stageMap.alterAtomWithPositionRangeCheck(
 					pos,
-					multiplier: 1.03,// + (0.3 * strength * dirFactor),
+					multiplier: 1.00 + (0.03 * dirFactor),
 					offset:     0.02 * strength// * dirFactor
 					) {
-						let nextStrength = strength * 0.4 + stageMap.lastFramesLuminosity[pos.y][pos.x] * 0.3
+						let lfl = stageMap.lastFramesLuminosity[pos.y][pos.x] * 0.5
+						let nextStrength = strength * 0.4 + ( lfl < 1.0 ? lfl : 1.0 )
 						if( nextStrength > 0.2 ) {
-							if( stageMap.floodScannedWithStrength[pos.y][pos.x] == 0 ) {
+							if( stageMap.floodPossible[pos.y][pos.x] ) {
 								let newFp = FloodPointer(inPosition: pos, inDirection: direction, inStrength: nextStrength )
 								nextFloodPointerList.append(newFp)
-								stageMap.floodScannedWithStrength[pos.y][pos.x] = nextStrength
+								stageMap.floodPossible[pos.y][pos.x] = false
 							}
 						}
 				}

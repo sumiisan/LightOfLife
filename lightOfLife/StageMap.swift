@@ -20,7 +20,7 @@ class StageMap {
 	---------------------------------*/
 	internal var atoms = [[Atom]]()
 	internal var lastFramesLuminosity = [[Luminosity]]()
-	internal var floodScannedWithStrength = [[Double]]()
+	internal var floodPossible = [[Bool]]()
 	internal var lights = [Light]()
 	
 	init() {
@@ -71,7 +71,7 @@ class StageMap {
 
 	func saveFrameLuminosity() {
 		lastFramesLuminosity = [[Luminosity]]()
-		floodScannedWithStrength = [[Double]]()
+		floodPossible = [[Bool]]()
 		for y in 0..<mapSize.height {
 			var row = [Luminosity]()
 			for x in 0..<mapSize.width {
@@ -79,7 +79,7 @@ class StageMap {
 				row.append(atom.luminosity)
 			}
 			lastFramesLuminosity.append(row)
-			floodScannedWithStrength.append([Double](count: mapSize.width, repeatedValue: 0.0))
+			floodPossible.append([Bool](count: mapSize.width, repeatedValue: true))
 		}
 	}
 	
