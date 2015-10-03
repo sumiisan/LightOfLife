@@ -12,10 +12,6 @@ import SpriteKit
 
 typealias Luminosity = Double
 
-struct MapEntity {
-	var atom:Atom?
-}
-
 struct IntSize {
 	var width:Int
 	var height:Int
@@ -24,4 +20,10 @@ struct IntSize {
 struct IntPoint {
 	var x:Int
 	var y:Int
+}
+
+class Random {
+	static func integer( v:Int ) -> Int {
+		return Int( arc4random_uniform( UInt32(v)) )
+	}
 }

@@ -18,11 +18,9 @@ class Atom : SKSpriteNode {
 		}
 		set(lum) {
 			luminosity_ = lum
-			color = UIColor(hue: 0.0, saturation: 0.0, brightness: CGFloat(lum), alpha: 1.0)
+			color = UIColor(hue: 0.0, saturation: 0.0, brightness: CGFloat(lum > 1 ? 1 : lum), alpha: 1.0)
 		}
 	}
-	
-
 	
 	override init(texture: SKTexture?, color: UIColor, size: CGSize) {
 		super.init(texture: texture, color: color, size: size)

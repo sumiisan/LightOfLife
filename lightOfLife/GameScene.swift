@@ -9,47 +9,43 @@ import Foundation
 import SpriteKit
 
 
-class GameScene: SKScene {
-	/*--------------------------------
-	MARK:	- constants -
-	---------------------------------*/
-	let mapSize = IntSize(width: 12, height: 20)
-	/*--------------------------------
-	MARK:	- variables -
-	---------------------------------*/
-	var map = [[MapEntity]]()
-	var lights = [Light]()
+class GameScene : SKScene {
+	
+	var stageMap:StageMap = StageMap()
+	let xGap = 35
+	let yGap = 31
 	
 	/*--------------------------------
 	MARK:	- initialization -
 	---------------------------------*/
     override func didMoveToView(view: SKView) {
-		
-		
-	
-		map = [[MapEntity]]()
-		
 		//	init atom map
-		let xGap = 35
-		let yGap = 31
 		
-		for y in 0..<mapSize.height {
-			var row = [MapEntity]()
-			for x in 0..<mapSize.width {
-//				let l:CGFloat = CGFloat(arc4random_uniform(11)) / 10
-				let luminosity = 0.2
-				let atom = Atom(imageNamed:"atom")
-				let xShift = y % 2 == 0 ? 0 : CGFloat(xGap) * 0.50
-				atom.position = CGPointMake( CGFloat( x * xGap ) + 320 + xShift,
-											 CGFloat( y * yGap ) + 100)
-				
-				atom.luminosity = luminosity
+		let width  = stageMap.mapSize.width
+		let height = stageMap.mapSize.height
+		
+		for y in 0..<height {
+			for x in 0..<width {
+				let atom = stageMap.atoms[y][x]
+				atom.position = cellPosition( IntPoint( x:x, y:y ) )
 				addChild(atom)
-				let mapEntity = MapEntity(atom:atom)
-				row.append(mapEntity)
 			}
-			map.append(row)
 		}
+		
+		for light in stageMap.lights {
+			light.position = cellPosition( light.mapPosition )
+			addChild(light)
+		}
+	}
+	/*--------------------------------
+	MARK:	- accessor and utils -
+	---------------------------------*/
+	func cellPosition( p:IntPoint ) -> CGPoint {
+		let xShift = p.y % 2 == 0 ? 0 : CGFloat(xGap) * 0.50
+		return CGPointMake(
+			CGFloat( p.x * xGap ) + 320 + xShift,
+			CGFloat( p.y * yGap ) + 100
+		)
 	}
 
 	/*--------------------------------
@@ -61,9 +57,11 @@ class GameScene: SKScene {
     }
 	
 	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-		let node = nodeAtPoint(touches.first!.locationInNode(self))
-		if let atom:Atom = node as? Atom {
-			atom.luminosity = 1.0
+		for touch in touches {
+			let node = nodeAtPoint(touch.locationInNode(self))
+			if let atom:Atom = node as? Atom {
+				atom.luminosity = atom.luminosity < 2.0 ? atom.luminosity * 2 + 0.4 : 2.0
+			}
 		}
 	}
    
@@ -72,12 +70,20 @@ class GameScene: SKScene {
 	---------------------------------*/
     override func update(currentTime: CFTimeInterval) {
 		//	darken every atom
-		for y in 0..<mapSize.height {
-			for x in 0..<mapSize.width {
-				map[y][x].atom!.luminosity *= 0.7
+		let width  = stageMap.mapSize.width
+		let height = stageMap.mapSize.height
+		
+		for y in 0..<height {
+			for x in 0..<width {
+				stageMap.alterAtom(IntPoint(x:x,y:y), multiplier: 0.9, offset: 0)
+//				stageMap.atoms[y][x].luminosity *= 0.9
 			}
 		}
-		
+		stageMap.saveFrameLuminosity()
+
+		for l in stageMap.lights {
+			l.beginFlood(stageMap)
+		}
 
 	}
 	

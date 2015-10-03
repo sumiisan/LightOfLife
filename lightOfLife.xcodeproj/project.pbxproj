@@ -19,6 +19,7 @@
 		168A492F1BBF5099000E4D24 /* BasicTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A492E1BBF5099000E4D24 /* BasicTypes.swift */; settings = {ASSET_TAGS = (); }; };
 		168A49321BBF7082000E4D24 /* Atom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A49311BBF7082000E4D24 /* Atom.swift */; settings = {ASSET_TAGS = (); }; };
 		168A49351BBF8A66000E4D24 /* Light.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A49341BBF8A66000E4D24 /* Light.swift */; settings = {ASSET_TAGS = (); }; };
+		168A49371BBF8C0F000E4D24 /* StageMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A49361BBF8C0F000E4D24 /* StageMap.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		168A492E1BBF5099000E4D24 /* BasicTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicTypes.swift; sourceTree = "<group>"; };
 		168A49311BBF7082000E4D24 /* Atom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atom.swift; sourceTree = "<group>"; };
 		168A49341BBF8A66000E4D24 /* Light.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Light.swift; sourceTree = "<group>"; };
+		168A49361BBF8C0F000E4D24 /* StageMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StageMap.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,10 +111,11 @@
 			children = (
 				168A48FC1BBF4715000E4D24 /* AppDelegate.swift */,
 				168A48FE1BBF4715000E4D24 /* GameScene.sks */,
+				168A49021BBF4715000E4D24 /* GameViewController.swift */,
 				168A49301BBF50A8000E4D24 /* Base */,
 				168A49331BBF7087000E4D24 /* Objects */,
 				168A49001BBF4715000E4D24 /* GameScene.swift */,
-				168A49021BBF4715000E4D24 /* GameViewController.swift */,
+				168A49361BBF8C0F000E4D24 /* StageMap.swift */,
 				168A49041BBF4715000E4D24 /* Main.storyboard */,
 				168A49071BBF4715000E4D24 /* Assets.xcassets */,
 				168A49091BBF4715000E4D24 /* LaunchScreen.storyboard */,
@@ -289,6 +292,7 @@
 			files = (
 				168A49351BBF8A66000E4D24 /* Light.swift in Sources */,
 				168A49011BBF4715000E4D24 /* GameScene.swift in Sources */,
+				168A49371BBF8C0F000E4D24 /* StageMap.swift in Sources */,
 				168A49031BBF4715000E4D24 /* GameViewController.swift in Sources */,
 				168A49321BBF7082000E4D24 /* Atom.swift in Sources */,
 				168A492F1BBF5099000E4D24 /* BasicTypes.swift in Sources */,
