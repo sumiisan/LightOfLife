@@ -16,6 +16,9 @@
 		168A490B1BBF4715000E4D24 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 168A49091BBF4715000E4D24 /* LaunchScreen.storyboard */; };
 		168A49161BBF4716000E4D24 /* lightOfLifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A49151BBF4716000E4D24 /* lightOfLifeTests.swift */; };
 		168A49211BBF4716000E4D24 /* lightOfLifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A49201BBF4716000E4D24 /* lightOfLifeUITests.swift */; };
+		168A492F1BBF5099000E4D24 /* BasicTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A492E1BBF5099000E4D24 /* BasicTypes.swift */; settings = {ASSET_TAGS = (); }; };
+		168A49321BBF7082000E4D24 /* Atom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A49311BBF7082000E4D24 /* Atom.swift */; settings = {ASSET_TAGS = (); }; };
+		168A49351BBF8A66000E4D24 /* Light.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A49341BBF8A66000E4D24 /* Light.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +54,9 @@
 		168A491C1BBF4716000E4D24 /* lightOfLifeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = lightOfLifeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		168A49201BBF4716000E4D24 /* lightOfLifeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = lightOfLifeUITests.swift; sourceTree = "<group>"; };
 		168A49221BBF4716000E4D24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		168A492E1BBF5099000E4D24 /* BasicTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicTypes.swift; sourceTree = "<group>"; };
+		168A49311BBF7082000E4D24 /* Atom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atom.swift; sourceTree = "<group>"; };
+		168A49341BBF8A66000E4D24 /* Light.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Light.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +109,8 @@
 			children = (
 				168A48FC1BBF4715000E4D24 /* AppDelegate.swift */,
 				168A48FE1BBF4715000E4D24 /* GameScene.sks */,
+				168A49301BBF50A8000E4D24 /* Base */,
+				168A49331BBF7087000E4D24 /* Objects */,
 				168A49001BBF4715000E4D24 /* GameScene.swift */,
 				168A49021BBF4715000E4D24 /* GameViewController.swift */,
 				168A49041BBF4715000E4D24 /* Main.storyboard */,
@@ -129,6 +137,23 @@
 				168A49221BBF4716000E4D24 /* Info.plist */,
 			);
 			path = lightOfLifeUITests;
+			sourceTree = "<group>";
+		};
+		168A49301BBF50A8000E4D24 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				168A492E1BBF5099000E4D24 /* BasicTypes.swift */,
+			);
+			name = Base;
+			sourceTree = "<group>";
+		};
+		168A49331BBF7087000E4D24 /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				168A49311BBF7082000E4D24 /* Atom.swift */,
+				168A49341BBF8A66000E4D24 /* Light.swift */,
+			);
+			name = Objects;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -262,8 +287,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				168A49351BBF8A66000E4D24 /* Light.swift in Sources */,
 				168A49011BBF4715000E4D24 /* GameScene.swift in Sources */,
 				168A49031BBF4715000E4D24 /* GameViewController.swift in Sources */,
+				168A49321BBF7082000E4D24 /* Atom.swift in Sources */,
+				168A492F1BBF5099000E4D24 /* BasicTypes.swift in Sources */,
 				168A48FD1BBF4715000E4D24 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -405,6 +433,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = lightOfLife/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sumiisan.lightOfLife;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -416,6 +445,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = lightOfLife/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sumiisan.lightOfLife;
 				PRODUCT_NAME = "$(TARGET_NAME)";
