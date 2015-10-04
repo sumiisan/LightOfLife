@@ -33,7 +33,11 @@ class Light : MapObject {
 			state_ = s
 			if s == LightStates.On {
 				color = UIColor.whiteColor()
-				runAction(SKAction.rotateByAngle(0.01, duration: NSTimeInterval.infinity), withKey: "rotate")
+				runAction(
+					SKAction.repeatActionForever(
+						SKAction.rotateByAngle(-3, duration: 1.0)
+					), withKey: "rotate"
+				)
 			} else {
 				color = UIColor(white: 0.2, alpha: 1.0)
 				removeActionForKey("rotate")
@@ -63,7 +67,7 @@ class Light : MapObject {
 	
 	init() {
 		let texture = SKTexture(imageNamed: "light")
-		super.init(texture: texture, color: UIColor.whiteColor(), size: texture.size() * 0.5)
+		super.init(texture: texture, color: UIColor.whiteColor(), size: texture.size() * 0.45)
 		setBasics()
 	}
 
@@ -119,13 +123,13 @@ class Light : MapObject {
 					multiplier: 1.00 + (0.03 * dirFactor),
 					offset:     0.02 * strength// * dirFactor
 					) {
-						let lfl = stageMap.lastFramesLuminosity[pos.y][pos.x] * 0.5
+						let lfl = stageMap.cells[pos.y][pos.x].lastFrameLuminosity * 0.5
 						let nextStrength = strength * 0.4 + ( lfl < 1.0 ? lfl : 1.0 )
 						if( nextStrength > 0.2 ) {
-							if( stageMap.floodPossible[pos.y][pos.x] ) {
+							if( stageMap.cells[pos.y][pos.x].floodable ) {
 								let newFp = FloodPointer(inPosition: pos, inDirection: direction, inStrength: nextStrength )
 								nextFloodPointerList.append(newFp)
-								stageMap.floodPossible[pos.y][pos.x] = false
+								stageMap.cells[pos.y][pos.x].floodable = false
 							}
 						}
 				}

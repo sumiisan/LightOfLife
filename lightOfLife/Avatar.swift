@@ -42,22 +42,7 @@ class Avatar : SKSpriteNode {
 	
 	init() {
 		let texture = SKTexture(imageNamed: "arrow")
-		super.init(texture: texture, color: UIColor.whiteColor(), size: texture.size())
-
-		/*		let mPath = CGPathCreateMutable()
-		
-		CGPathMoveToPoint   (mPath, nil, 0, -10)
-		CGPathAddLineToPoint(mPath, nil, -10, 5)
-		CGPathAddLineToPoint(mPath, nil, +10, 5)
-		CGPathAddLineToPoint(mPath, nil, 0, -10)
-		
-		path = mPath
-		
-		lineWidth = 2
-		fillColor = UIColor.redColor()
-		strokeColor = fillColor.colorWithAlphaComponent(0.5)
-*/
-		
+		super.init(texture: texture, color: UIColor.whiteColor(), size: texture.size() * 0.8)
 		zPosition = 40000
 		
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("lightTapped:"), name: Notification.LightTapped.rawValue, object: nil)
@@ -110,10 +95,34 @@ class Avatar : SKSpriteNode {
 			runAction(moveAction, withKey: "move") { () -> Void in
 				self.hexgrid.position = destMapP
 				self.moveToNextHex()
+				
+				self.checkObjectUnderMyFeets()
 			}
 			runAction(rotateAction, withKey: "rotate")
 		}
 	}
 
+	func checkObjectUnderMyFeets() {
+		let object = StageMap.mainMap.objectAt(hexgrid.position)
+		if let light = object as? Light {
+			if( light.state == LightStates.Off ) {
+				light.state = LightStates.On
+			}
+		}
+	}
+	
+	
+	func beginFlood(stageMap: StageMap) {
+		stageMap.alterAtom(mapPosition, multiplier: 1.01, offset: 0.1)
+		
+		let fp = FloodPointer(inPosition: mapPosition, inDirection: 6, inStrength: 1.0)
+		let dirs = fp.directions()
+		
+		for d in dirs {
+			let p = fp.neighbour(d)
+			stageMap.alterAtom(p, multiplier: 1.01, offset: 0.1)
+		}
+		
+	}
 
 }

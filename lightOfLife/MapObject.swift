@@ -14,6 +14,6 @@ class MapObject : SKSpriteNode {
 	func beginFlood( stageMap:StageMap ) {
 		()
 	}
-
+	
 }
 

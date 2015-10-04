@@ -26,7 +26,7 @@ class GameScene : SKScene {
 		
 		for y in 0..<height {
 			for x in 0..<width {
-				let atom = stageMap.atoms[y][x]
+				let atom = stageMap.cells[y][x].atom
 				atom.position = Screen.cellPosition( IntPoint( x:x, y:y ) )
 				addChild(atom)
 			}
@@ -91,10 +91,14 @@ class GameScene : SKScene {
 		for d in stageMap.darks {
 			d.beginFlood(stageMap)
 		}
+		
+		let shuffledLights = stageMap.lights.shuffle()
 
-		for l in stageMap.lights {
+		for l in shuffledLights {
 			l.beginFlood(stageMap)
 		}
+		
+		avatar.beginFlood(stageMap)
 	}
 }
 

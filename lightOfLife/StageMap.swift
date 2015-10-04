@@ -3,16 +3,21 @@
 //  lightOfLife
 //
 //  Created by sumiisan on 2015/10/03.
-//  Copyright © 2015年 sumiisan. All rights reserved.
+//  Copyright © 2015 sumiisan. All rights reserved.
 //
 
 import SpriteKit
 
 struct Cell {
 	var atom:Atom
-	var object:MapObject
+	var object:MapObject?
 	var floodable:Bool
 	var lastFrameLuminosity:Luminosity
+	
+	mutating func saveLuminosity() {
+		lastFrameLuminosity = atom.luminosity
+		floodable = true
+	}
 }
 
 class StageMap {
@@ -26,52 +31,45 @@ class StageMap {
 	/*--------------------------------
 	MARK:	- objects
 	---------------------------------*/
-	internal var atoms  = [[Atom]]()
-//	internal var cells  = [[Cell]]()
+	internal var cells  = [[Cell]]()
 	internal var lights = [Light]()
 	internal var darks  = [Dark]()
-	
 	
 	/*--------------------------------
 	MARK:	- initialization -
 	---------------------------------*/
+	private static var singleton_:StageMap? = nil
 	
-	private var singleton_:StageMap? = nil
-	
-	internal var singleton:StageMap {
+	internal static var mainMap:StageMap {
 		get {
-			if singleton_ == nil {
-				singleton_ = StageMap()
+			if StageMap.singleton_ == nil {
+				StageMap.singleton_ = StageMap()
 			}
-			return singleton_!
+			return StageMap.singleton_!
 		}
 	}
 
-	
 	init() {
-		singleton_ = self
+		StageMap.singleton_ = self
 		for _ in 0..<mapSize.height {
-			var row = [Atom]()
+			var row = [Cell]()
 			for _ in 0..<mapSize.width {
 				let atom = Atom(imageNamed:"atom")
 				atom.luminosity = 0.0
-				row.append(atom)
+				row.append(Cell(atom: atom, object: nil, floodable: true, lastFrameLuminosity: 0))
 			}
-			atoms.append(row)
+			cells.append(row)
 		}
-		
-		var reserve = [Bool](count: mapSize.width * mapSize.height, repeatedValue: false)
 		
 		for _ in 0..<maxLightCount {
 			let light = Light()
-			
-			light.mapPosition = getUnreservedPosition( &reserve, margin: 3 )
+			placeMapObject(light, at: searchUnreservedCellWithMargin( 2 ))
 			lights.append(light)
 		}
 		
 		for _ in 0..<maxDarkCount {
 			let dark = Dark()
-			dark.mapPosition = getUnreservedPosition( &reserve, margin: 2 )
+			placeMapObject(dark, at: searchUnreservedCellWithMargin( 1 ))
 			darks.append(dark)
 		}
 		
@@ -80,51 +78,51 @@ class StageMap {
 	}
 	
 	/*-------------------------------------------
-	MARK:	- temporary map related buffers
+	MARK:	- objects
 	--------------------------------------------*/
-	internal var lastFramesLuminosity = [[Luminosity]]()
-	internal var floodPossible = [[Bool]]()
-
-	func indexForPoint( p:IntPoint ) -> Int {
-		return p.y * mapSize.width + p.x
+	func placeMapObject( object:MapObject, at position:IntPoint ) {
+		cells[position.y][position.x].object = object
+		object.mapPosition = position
 	}
 	
-	func getUnreservedPosition( inout reserve:[Bool], margin:Int ) -> IntPoint {
+	final internal func objectAt( position:IntPoint ) -> MapObject? {
+		return cells[position.y][position.x].object
+	}
+	
+	func searchUnreservedCellWithMargin( margin:Int ) -> IntPoint {
 		while( true ) {
 			let p = randomPositionWithEdgeMargin(margin)
-			if !reserve[ indexForPoint(p) ] {
-				reserve[ indexForPoint(p) ] = true
+			if cells[p.y][p.x].object == nil {
 				return p
 			}
 		}
 	}
 	
+	/*-------------------------------------------
+	MARK:	- temporary map related buffers
+	--------------------------------------------*/
 	func saveFrameLuminosity() {
-		lastFramesLuminosity = [[Luminosity]]()
-		floodPossible = [[Bool]]()
+//		let _ = flatMap(cells){ Cell($0).saveLuminosity() }	//	causes compiler seg-fault!
+//		let _ = map(cells){($0 as [Cell]).map{($0 as Cell).saveLuminosity()}}		//	causes compiler seg-fault too!
 		for y in 0..<mapSize.height {
-			var row = [Luminosity]()
 			for x in 0..<mapSize.width {
-				let atom = atoms[y][x]
-				row.append(atom.luminosity)
+				cells[y][x].saveLuminosity()
 			}
-			lastFramesLuminosity.append(row)
-			floodPossible.append([Bool](count: mapSize.width, repeatedValue: true))
 		}
 	}
-	
-
 	
 	/*--------------------------------
 	MARK:	- map access
 	---------------------------------*/
 	func alterAtom( position:IntPoint, multiplier:Double, offset:Double ) {
-		atoms[position.y][position.x].luminosity = atoms[position.y][position.x].luminosity * multiplier + offset
+		cells[position.y][position.x].atom.luminosity
+			= cells[position.y][position.x].atom.luminosity * multiplier + offset
 	}
 	
 	func alterAtomWithPositionRangeCheck( position:IntPoint, multiplier:Double, offset:Double ) -> Bool {
 		if positionIsInsideMap( position ) {
-			atoms[position.y][position.x].luminosity = atoms[position.y][position.x].luminosity * multiplier + offset
+			cells[position.y][position.x].atom.luminosity
+				= cells[position.y][position.x].atom.luminosity * multiplier + offset
 			return true
 		}
 		return false
@@ -140,7 +138,6 @@ class StageMap {
 	/*--------------------------------
 	MARK:	- object access
 	---------------------------------*/
-	
 	func uncoverObjectsAt( point:IntPoint ) {
 		for light in lights {
 			if light.mapPosition == point {
@@ -148,7 +145,6 @@ class StageMap {
 			}
 		}
 	}
-
 
 	/*--------------------------------
 	MARK:	- utils
