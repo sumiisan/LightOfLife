@@ -13,112 +13,100 @@ enum LightStates {
 	case On
 }
 
-typealias ScanDirection = Int
+class Light : MapObject {
+	/*--------------------------------
+	MARK:	- private vars
+	---------------------------------*/
 
-class FloodPointer {
-	var position = IntPoint(x: 0, y: 0)
-	var strength:Double = 1.0
-	var baseDirection:ScanDirection = 6
+	private var state_ = LightStates.Off
+	private var covered_ = true
 	
-	internal convenience init(inPosition: IntPoint, inDirection: ScanDirection, inStrength: Double) {
-		self.init()
-		position		= inPosition
-		baseDirection	= inDirection
-		strength		= inStrength
-	}
-	
-	/**
+	/*--------------------------------
+	MARK:	- getter / setter
+	---------------------------------*/
 
-			   (0,3)	(1,3)	(2,3)	(3,3)	(4,3)
-	
-			(0,2)	(1,2)	(2,2)	(3,2)	(4,2)
-	
-			   (0,1)	(1,1)	(2,1)	(3,1)	(4,1)
-	
-			(0,0)	(1,0)	(2,0)	(3,0)	(4,0)
-
-
-	*/
-	private let baseDiff = [[0,-1],[1,0],[0,1],[-1,1],[-1,0],[-1,-1]]
-
-	func sixNeighbours() -> [IntPoint] {
-		let x			= position.x
-		let y			= position.y
-		let xShift		= ( y % 2 == 0 ) ? 0 : 1
-		//
-		let upperRight	= IntPoint( x: x     + xShift,	y: y - 1 )
-		let right		= IntPoint( x: x + 1,			y: y )
-		let lowerRight	= IntPoint( x: x     + xShift,	y: y + 1 )
-		let lowerLeft	= IntPoint( x: x - 1 + xShift,	y: y + 1 )
-		let left		= IntPoint( x: x - 1,			y: y )
-		let upperLeft	= IntPoint( x: x - 1 + xShift,	y: y - 1 )
-		return [upperRight,right,lowerRight,lowerLeft,left,upperLeft]
-	}
-	
-	func neighbour(inDirection:ScanDirection) -> IntPoint {
-		let d = baseDiff[inDirection]
-		let xShift		= ( position.y % 2 == 0 || d[1] == 0 ) ? 0 : 1
-		return IntPoint(x: position.x + d[0] + xShift, y: position.y + d[1])
-	}
-	
-	func directionWithOffset( inDirection:ScanDirection, offset:Int ) -> ScanDirection {
-		return ( inDirection + offset + 60000 ) % 6	//	60000 is a relative big number (without sense) we can divide by 6.
-	}
-	
-
-	func directions() -> [ScanDirection] {
-		if baseDirection == 6 {
-			return [0,1,2,3,4,5].shuffle()
-		}
-		
-		if ( Random.integer(2) == 0 ) {
-			return [baseDirection,(baseDirection+1)%6,(baseDirection+5)%6]	//	+5 equals -1
-		} else {
-			return [baseDirection,(baseDirection+5)%6,(baseDirection+1)%6]	//	+5 equals -1
-		}
-	}
-	
-	
-	
-}
-
-class Light : SKShapeNode {
-	var mapPosition = IntPoint(x:0, y:0)
-	var state_ = LightStates.Off
 	var state:LightStates {
 		get {
 			return state_
 		}
 		set(s) {
 			state_ = s
-			hidden = s == LightStates.Off
+			if s == LightStates.On {
+				color = UIColor.whiteColor()
+				runAction(SKAction.rotateByAngle(0.01, duration: NSTimeInterval.infinity), withKey: "rotate")
+			} else {
+				color = UIColor(white: 0.2, alpha: 1.0)
+				removeActionForKey("rotate")
+			}
 		}
 	}
+	
+	var covered:Bool {
+		get {
+			return covered_
+		}
+		set(c) {
+			covered_ = c
+			hidden = c
+			userInteractionEnabled = !c
+		}
+	}
+	
+	/*--------------------------------
+	MARK:	- init
+	---------------------------------*/
 
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		setBasics()
 	}
 	
-	override init() {
-		super.init()
+	init() {
+		let texture = SKTexture(imageNamed: "light")
+		super.init(texture: texture, color: UIColor.whiteColor(), size: texture.size() * 0.5)
 		setBasics()
 	}
 
-	func setBasics() {
+	private func setBasics() {
+		colorBlendFactor = 1
 		state = LightStates.Off
+		covered = true
 		zPosition = 10000
-		fillColor = UIColor.whiteColor()
 	}
 	
-	func beginFlood( stageMap:StageMap ) {
+	/*--------------------------------
+	MARK:	- state change
+	---------------------------------*/
+	func uncover() {
+		covered = false
+	}
+	
+	/*--------------------------------
+	MARK:	- interaction
+	---------------------------------*/
+
+	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+		//let touch = touches.first
+		//state = state == LightStates.Off ? LightStates.On : LightStates.Off
+		NSNotificationCenter.defaultCenter().postNotificationName(
+			Notification.LightTapped.rawValue,
+			object: self,
+			userInfo: ["x":mapPosition.x, "y":mapPosition.y]
+		)
+	}
+
+	/*--------------------------------
+	MARK:	- flood
+	---------------------------------*/
+	
+	override func beginFlood( stageMap:StageMap ) {
 		if state == .On {
 			let fp = FloodPointer(inPosition: mapPosition, inDirection:6, inStrength: 1.0 )
 			flood( stageMap, floodPointerList: [fp] )
 		}
 	}
 	
-	func flood( stageMap:StageMap, floodPointerList:[FloodPointer] ) {
+	private func flood( stageMap:StageMap, floodPointerList:[FloodPointer] ) {
 		var nextFloodPointerList = [FloodPointer]()
 		for fp in floodPointerList {
 			let directions = fp.directions()

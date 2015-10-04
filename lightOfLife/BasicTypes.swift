@@ -12,21 +12,30 @@ import SpriteKit
 
 typealias Luminosity = Double
 
+/*--------------------------------
+MARK:	- integer size
+---------------------------------*/
+
 struct IntSize {
 	var width:Int
 	var height:Int
 }
+
+/*--------------------------------
+MARK:	- integer point
+---------------------------------*/
 
 struct IntPoint {
 	var x:Int
 	var y:Int
 }
 
-class Random {
-	static func integer( v:Int ) -> Int {
-		return Int( arc4random_uniform( UInt32(v)) )
-	}
+func == (left: IntPoint, right: IntPoint) -> Bool {
+	return (left.x == right.x) && (left.y == right.y)
 }
 
+func != (left: IntPoint, right: IntPoint) -> Bool {
+	return (left.x != right.x) || (left.y != right.y)
+}
 
 
