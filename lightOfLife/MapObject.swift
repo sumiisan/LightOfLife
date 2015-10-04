@@ -10,8 +10,8 @@ import SpriteKit
 
 class MapObject : SKSpriteNode {
 	var mapPosition = IntPoint(x:0, y:0)
-
-	func beginFlood( stageMap:StageMap ) {
+	
+	func update( stageMap:StageMap ) {
 		()
 	}
 	

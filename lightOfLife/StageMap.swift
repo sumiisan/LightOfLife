@@ -73,7 +73,7 @@ class StageMap {
 			darks.append(dark)
 		}
 		
-		lights[0].state = LightStates.On	//	turn first light on
+		lights[0].touch()	//	turn first light on
 		lights[0].covered = false
 	}
 	

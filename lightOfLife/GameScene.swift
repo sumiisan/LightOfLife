@@ -81,21 +81,28 @@ class GameScene : SKScene {
 		let width  = stageMap.mapSize.width
 		let height = stageMap.mapSize.height
 		
+		//	decay
 		for y in 0..<height {
 			for x in 0..<width {
-				stageMap.alterAtom(IntPoint(x:x,y:y), multiplier: 0.9, offset: 0)
+				
+//				stageMap.alterAtom(IntPoint(x:x,y:y), multiplier: 0.9, offset: 0)
+				var l = stageMap.cells[y][x].atom.luminosity * 0.9
+				if l > 4 {
+					l = 4
+				}
+				stageMap.cells[y][x].atom.luminosity = l
 			}
 		}
 		stageMap.saveFrameLuminosity()
 		
 		for d in stageMap.darks {
-			d.beginFlood(stageMap)
+			d.update(stageMap)
 		}
 		
 		let shuffledLights = stageMap.lights.shuffle()
 
 		for l in shuffledLights {
-			l.beginFlood(stageMap)
+			l.update(stageMap)
 		}
 		
 		avatar.beginFlood(stageMap)

@@ -26,7 +26,7 @@ class Dark : MapObject {
 		zPosition = 20000
 	}
 	
-	override func beginFlood(stageMap: StageMap) {
+	override func update(stageMap: StageMap) {
 		stageMap.cells[mapPosition.y][mapPosition.x].floodable = false
 		stageMap.alterAtom(mapPosition, multiplier: 0.1, offset: 0)
 		

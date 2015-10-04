@@ -105,9 +105,7 @@ class Avatar : SKSpriteNode {
 	func checkObjectUnderMyFeets() {
 		let object = StageMap.mainMap.objectAt(hexgrid.position)
 		if let light = object as? Light {
-			if( light.state == LightStates.Off ) {
-				light.state = LightStates.On
-			}
+			light.touch()
 		}
 	}
 	
@@ -120,7 +118,7 @@ class Avatar : SKSpriteNode {
 		
 		for d in dirs {
 			let p = fp.neighbour(d)
-			stageMap.alterAtom(p, multiplier: 1.01, offset: 0.1)
+			stageMap.alterAtom(p, multiplier: 1.01, offset: 0.01)
 		}
 		
 	}

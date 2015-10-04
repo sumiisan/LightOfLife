@@ -19,7 +19,10 @@ class Light : MapObject {
 	---------------------------------*/
 
 	private var state_ = LightStates.Off
+	private var power_:Double = 0.0
 	private var covered_ = true
+	
+	internal var capacity:Double = 4.0	//	small light class
 	
 	/*--------------------------------
 	MARK:	- getter / setter
@@ -39,8 +42,22 @@ class Light : MapObject {
 					), withKey: "rotate"
 				)
 			} else {
-				color = UIColor(white: 0.2, alpha: 1.0)
+				color = UIColor(white: 0.1, alpha: 1.0)
 				removeActionForKey("rotate")
+			}
+		}
+	}
+	
+	var power:Double {
+		get {
+			return power_
+		}
+		set(p) {
+			power_ = p
+			let l = power > 1.0 ? 1.0 : power
+			color = UIColor(white: CGFloat(l), alpha: 1.0)
+			if( power_ < 0.1 ) {
+				state = LightStates.Off
 			}
 		}
 	}
@@ -85,6 +102,11 @@ class Light : MapObject {
 		covered = false
 	}
 	
+	func touch() {
+		state = LightStates.On
+		power = capacity
+	}
+	
 	/*--------------------------------
 	MARK:	- interaction
 	---------------------------------*/
@@ -100,13 +122,17 @@ class Light : MapObject {
 	}
 
 	/*--------------------------------
-	MARK:	- flood
+	MARK:	- action
 	---------------------------------*/
-	
-	override func beginFlood( stageMap:StageMap ) {
+	override func update( stageMap:StageMap ) {
 		if state == .On {
-			let fp = FloodPointer(inPosition: mapPosition, inDirection:6, inStrength: 1.0 )
+			power -= 0.001
+			let fp = FloodPointer(inPosition: mapPosition, inDirection:6, inStrength: (power > 1 ? 1.0 : power ) )
 			flood( stageMap, floodPointerList: [fp] )
+		} else if covered {
+			if stageMap.cells[mapPosition.y][mapPosition.x].atom.luminosity > 0.3 {
+				covered = false
+			}
 		}
 	}
 	
