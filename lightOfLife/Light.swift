@@ -8,9 +8,14 @@
 
 import SpriteKit
 
-enum LightStates {
+enum LightState {
 	case Off
 	case On
+}
+
+enum LightSize {
+	case Big
+	case Small
 }
 
 class Light : MapObject {
@@ -18,27 +23,28 @@ class Light : MapObject {
 	MARK:	- private vars
 	---------------------------------*/
 
-	private var state_ = LightStates.Off
+	private var state_ = LightState.Off
+	private var lightSize = LightSize.Small
 	private var power_:Double = 0.0
 	private var covered_ = true
 	
-	internal var capacity:Double = 4.0	//	small light class
+	internal var capacity:Double = 2.0	//	small light class
 	
 	/*--------------------------------
 	MARK:	- getter / setter
 	---------------------------------*/
 
-	var state:LightStates {
+	var state:LightState {
 		get {
 			return state_
 		}
 		set(s) {
 			state_ = s
-			if s == LightStates.On {
+			if s == LightState.On {
 				color = UIColor.whiteColor()
 				runAction(
 					SKAction.repeatActionForever(
-						SKAction.rotateByAngle(-3, duration: 1.0)
+						SKAction.rotateByAngle( lightSize == LightSize.Small ? -3 : -1.5, duration: 1.0)
 					), withKey: "rotate"
 				)
 			} else {
@@ -57,7 +63,7 @@ class Light : MapObject {
 			let l = power > 1.0 ? 1.0 : power
 			color = UIColor(white: CGFloat(l), alpha: 1.0)
 			if( power_ < 0.1 ) {
-				state = LightStates.Off
+				state = LightState.Off
 			}
 		}
 	}
@@ -89,10 +95,15 @@ class Light : MapObject {
 	}
 
 	private func setBasics() {
+		type = .Light
 		colorBlendFactor = 1
-		state = LightStates.Off
+		state = LightState.Off
 		covered = true
 		zPosition = 10000
+		if 4.randomNumber() == 0 {
+			lightSize = LightSize.Big
+			capacity = 4.0
+		}
 	}
 	
 	/*--------------------------------
@@ -103,7 +114,7 @@ class Light : MapObject {
 	}
 	
 	func touch() {
-		state = LightStates.On
+		state = LightState.On
 		power = capacity
 	}
 	
@@ -128,9 +139,10 @@ class Light : MapObject {
 		if state == .On {
 			power -= 0.001
 			let fp = FloodPointer(inPosition: mapPosition, inDirection:6, inStrength: (power > 1 ? 1.0 : power ) )
+			stageMap.cells[mapPosition.y][mapPosition.x].atom.luminosity = 1.0
 			flood( stageMap, floodPointerList: [fp] )
 		} else if covered {
-			if stageMap.cells[mapPosition.y][mapPosition.x].atom.luminosity > 0.3 {
+			if stageMap.cells[mapPosition.y][mapPosition.x].luminosity() > 0.3 {
 				covered = false
 			}
 		}

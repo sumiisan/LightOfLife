@@ -27,6 +27,9 @@
 		16E13A4F1BC00B4A0033B91C /* Avatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E13A4E1BC00B4A0033B91C /* Avatar.swift */; settings = {ASSET_TAGS = (); }; };
 		16E13A511BC013060033B91C /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E13A501BC013060033B91C /* Screen.swift */; settings = {ASSET_TAGS = (); }; };
 		16E13A531BC08A650033B91C /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E13A521BC08A650033B91C /* Notification.swift */; settings = {ASSET_TAGS = (); }; };
+		16E13A551BC33BA10033B91C /* Preference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E13A541BC33BA10033B91C /* Preference.swift */; settings = {ASSET_TAGS = (); }; };
+		16E13A571BC488C80033B91C /* Tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E13A561BC488C70033B91C /* Tree.swift */; settings = {ASSET_TAGS = (); }; };
+		16E13A591BC489680033B91C /* MapCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E13A581BC489680033B91C /* MapCell.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +76,9 @@
 		16E13A4E1BC00B4A0033B91C /* Avatar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Avatar.swift; sourceTree = "<group>"; };
 		16E13A501BC013060033B91C /* Screen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Screen.swift; sourceTree = "<group>"; };
 		16E13A521BC08A650033B91C /* Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
+		16E13A541BC33BA10033B91C /* Preference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preference.swift; sourceTree = "<group>"; };
+		16E13A561BC488C70033B91C /* Tree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tree.swift; sourceTree = "<group>"; };
+		16E13A581BC489680033B91C /* MapCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +137,7 @@
 				168A49001BBF4715000E4D24 /* GameScene.swift */,
 				16E13A501BC013060033B91C /* Screen.swift */,
 				168A49361BBF8C0F000E4D24 /* StageMap.swift */,
+				16E13A581BC489680033B91C /* MapCell.swift */,
 				168A49041BBF4715000E4D24 /* Main.storyboard */,
 				168A49071BBF4715000E4D24 /* Assets.xcassets */,
 				168A49091BBF4715000E4D24 /* LaunchScreen.storyboard */,
@@ -161,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				16254F881BBFDA4800581635 /* HexGrid.swift */,
+				16E13A541BC33BA10033B91C /* Preference.swift */,
 				16E13A521BC08A650033B91C /* Notification.swift */,
 				168A492E1BBF5099000E4D24 /* BasicTypes.swift */,
 				16254F841BBFD33E00581635 /* ConventionalExtensions.swift */,
@@ -175,6 +183,7 @@
 				16E13A4E1BC00B4A0033B91C /* Avatar.swift */,
 				16254F8A1BBFDA5E00581635 /* MapObject.swift */,
 				168A49341BBF8A66000E4D24 /* Light.swift */,
+				16E13A561BC488C70033B91C /* Tree.swift */,
 				16254F861BBFD9D900581635 /* Dark.swift */,
 			);
 			name = Objects;
@@ -315,12 +324,15 @@
 				168A49351BBF8A66000E4D24 /* Light.swift in Sources */,
 				168A49011BBF4715000E4D24 /* GameScene.swift in Sources */,
 				16E13A511BC013060033B91C /* Screen.swift in Sources */,
+				16E13A591BC489680033B91C /* MapCell.swift in Sources */,
 				168A49371BBF8C0F000E4D24 /* StageMap.swift in Sources */,
+				16E13A571BC488C80033B91C /* Tree.swift in Sources */,
 				168A49031BBF4715000E4D24 /* GameViewController.swift in Sources */,
 				168A49321BBF7082000E4D24 /* Atom.swift in Sources */,
 				16E13A4F1BC00B4A0033B91C /* Avatar.swift in Sources */,
 				16254F8B1BBFDA5E00581635 /* MapObject.swift in Sources */,
 				168A492F1BBF5099000E4D24 /* BasicTypes.swift in Sources */,
+				16E13A551BC33BA10033B91C /* Preference.swift in Sources */,
 				16E13A531BC08A650033B91C /* Notification.swift in Sources */,
 				168A48FD1BBF4715000E4D24 /* AppDelegate.swift in Sources */,
 				16254F871BBFD9D900581635 /* Dark.swift in Sources */,

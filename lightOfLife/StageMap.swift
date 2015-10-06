@@ -8,17 +8,16 @@
 
 import SpriteKit
 
-struct Cell {
-	var atom:Atom
-	var object:MapObject?
-	var floodable:Bool
-	var lastFrameLuminosity:Luminosity
-	
-	mutating func saveLuminosity() {
-		lastFrameLuminosity = atom.luminosity
-		floodable = true
-	}
-}
+
+/*--------------------------------
+
+
+
+MARK:	- STAGE MAP -
+
+
+
+---------------------------------*/
 
 class StageMap {
 	/*--------------------------------
@@ -31,7 +30,7 @@ class StageMap {
 	/*--------------------------------
 	MARK:	- objects
 	---------------------------------*/
-	internal var cells  = [[Cell]]()
+	internal var cells  = [[MapCell]]()
 	internal var lights = [Light]()
 	internal var darks  = [Dark]()
 	
@@ -52,11 +51,16 @@ class StageMap {
 	init() {
 		StageMap.singleton_ = self
 		for _ in 0..<mapSize.height {
-			var row = [Cell]()
+			var row = [MapCell]()
 			for _ in 0..<mapSize.width {
 				let atom = Atom(imageNamed:"atom")
 				atom.luminosity = 0.0
-				row.append(Cell(atom: atom, object: nil, floodable: true, lastFrameLuminosity: 0))
+				row.append(MapCell(
+					atom: atom,
+					object: nil,
+					floodable: true,
+					lastFrameLuminosity: 0
+				))
 			}
 			cells.append(row)
 		}
@@ -101,6 +105,21 @@ class StageMap {
 	/*-------------------------------------------
 	MARK:	- temporary map related buffers
 	--------------------------------------------*/
+	func processCells() {
+		for y in 0..<mapSize.height {
+			for x in 0..<mapSize.width {
+				if( cells[y][x].decay() ) {
+					//upgrade
+					let neighbour = HexGrid(pos: IntPoint(x: x,y: y)).neighbour(6.randomNumber())
+					let cell = cellWithPositionRangeCheck(neighbour)
+					if cell != nil && cell!.atom.grade < AtomGrade_Wood {
+						cell!.atom.pass()
+					}
+				}
+			}
+		}
+	}
+	
 	func saveFrameLuminosity() {
 //		let _ = flatMap(cells){ Cell($0).saveLuminosity() }	//	causes compiler seg-fault!
 //		let _ = map(cells){($0 as [Cell]).map{($0 as Cell).saveLuminosity()}}		//	causes compiler seg-fault too!
@@ -111,9 +130,32 @@ class StageMap {
 		}
 	}
 	
+	func update() {
+		for d in darks {
+			d.update(self)
+		}
+		
+		let shuffledLights = lights.shuffle()
+		
+		for l in shuffledLights {
+			l.update(self)
+		}
+	}
+	
 	/*--------------------------------
 	MARK:	- map access
 	---------------------------------*/
+	func cell( pos:IntPoint ) -> MapCell {
+		return cells[pos.y][pos.x]
+	}
+	
+	func cellWithPositionRangeCheck( position:IntPoint ) -> MapCell? {
+		if positionIsInsideMap(position) {
+			return cells[position.y][position.x]
+		}
+		return nil
+	}
+	
 	func alterAtom( position:IntPoint, multiplier:Double, offset:Double ) {
 		cells[position.y][position.x].atom.luminosity
 			= cells[position.y][position.x].atom.luminosity * multiplier + offset
@@ -128,7 +170,7 @@ class StageMap {
 		return false
 	}
 	
-	final private func positionIsInsideMap( position:IntPoint ) -> Bool {
+	final func positionIsInsideMap( position:IntPoint ) -> Bool {
 		return position.x >= 0
 			&& position.x < mapSize.width
 			&& position.y >= 0

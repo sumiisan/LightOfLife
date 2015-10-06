@@ -62,7 +62,7 @@ class Avatar : SKSpriteNode {
 	MARK:	- interaction (message received)
 	---------------------------------*/
 	func lightTapped(notifiation:NSNotification) {
-		planMoveToMapPosition(IntPoint(
+		planMoveToCell(IntPoint(
 			x: notifiation.userInfo!["x"]!.integerValue,
 			y: notifiation.userInfo!["y"]!.integerValue
 			))
@@ -71,44 +71,73 @@ class Avatar : SKSpriteNode {
 	/*--------------------------------
 	MARK:	- move avatar
 	---------------------------------*/
-	internal func planMoveToMapPosition( p:IntPoint ) {
+	internal func planMoveToCell( p:IntPoint ) {
 		destination = p
 		moveToNextHex()
 	}
+	
 
 	func moveToNextHex() {
 		let dir = hexgrid.quantizeDirectionTo(destination!)
-		if dir != HexDirectionAll {
-			let destMapP    = hexgrid.neighbour(dir)
-			let destScreenP = Screen.cellPosition(destMapP)
-			let moveAction   = SKAction.moveTo(destScreenP, duration: 1.0)
-			var angleDiff = CGFloat(dir * 60 + 210) - zRotation.radiansToDegrees
-			if  angleDiff < 0 {
-				angleDiff += 360
-			}
-			if angleDiff > 180 {
-				angleDiff -= 360
-			}
-//			print("delta-th:\(angleDiff)")
-			let rotateAction = SKAction.rotateToAngle(angleDiff.degreesToRadians + zRotation, duration: 0.5)
-			
-			runAction(moveAction, withKey: "move") { () -> Void in
-				self.hexgrid.position = destMapP
-				self.moveToNextHex()
-				
-				self.checkObjectUnderMyFeets()
-			}
-			runAction(rotateAction, withKey: "rotate")
+		if dir == HexDirectionAll {
+			//	no moves planned
+			return
 		}
+		
+		var targetP = hexgrid.neighbour(dir)
+		var targetCell = StageMap.mainMap.cellWithPositionRangeCheck(targetP)
+		var doesStopAvatar = (targetCell != nil) ? targetCell!.doesStopAvatar() : true
+
+		if doesStopAvatar {
+			targetP = hexgrid.neighbour(hexgrid.alternativeTo(dir))
+			targetCell = StageMap.mainMap.cellWithPositionRangeCheck(targetP)
+			//	try another direction
+			doesStopAvatar = (targetCell != nil) ? targetCell!.doesStopAvatar() : true
+			if doesStopAvatar {	//	wait 0.5 sec and try again
+				runAction(nil, withKey: "move", after: 0.25, completion: { () -> Void in
+					self.moveToNextHex()
+				})
+				rotateTo(dir)
+				return
+			}
+		}
+		
+		rotateTo(dir)
+		
+		let targetScreenPosition = Screen.cellPosition(targetP)
+		let moveAction   = SKAction.moveTo(targetScreenPosition, duration: 0.25)
+		
+		runAction(moveAction, withKey: "move") { () -> Void in
+			self.hexgrid.position = targetP
+			self.moveToNextHex()
+			
+			self.checkObjectUnderMyFeets()
+		}
+	
+	}
+	
+	func rotateTo(dir:HexDirection) {
+		var angleDiff = CGFloat(dir * 60 + 210) - zRotation.radiansToDegrees
+		if  angleDiff < 0 {
+			angleDiff += 360
+		}
+		if angleDiff > 180 {
+			angleDiff -= 360
+		}
+		//			print("delta-th:\(angleDiff)")
+		let rotateAction = SKAction.rotateToAngle(angleDiff.degreesToRadians + zRotation, duration: 0.3)
+		runAction(rotateAction, withKey: "rotate")
 	}
 
 	func checkObjectUnderMyFeets() {
-		let object = StageMap.mainMap.objectAt(hexgrid.position)
+		let cell = StageMap.mainMap.cell(hexgrid.position)
+		cell.atom.pass()
+		
+		let object = cell.object
 		if let light = object as? Light {
 			light.touch()
 		}
 	}
-	
 	
 	func beginFlood(stageMap: StageMap) {
 		stageMap.alterAtom(mapPosition, multiplier: 1.01, offset: 0.1)
@@ -118,7 +147,11 @@ class Avatar : SKSpriteNode {
 		
 		for d in dirs {
 			let p = fp.neighbour(d)
-			stageMap.alterAtom(p, multiplier: 1.01, offset: 0.01)
+			if stageMap.positionIsInsideMap(p) {
+				if stageMap.cell(p).luminosity() < 0.5 {
+					stageMap.alterAtom(p, multiplier: 1.111111, offset: 0.005)
+				}
+			}
 		}
 		
 	}

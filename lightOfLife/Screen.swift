@@ -10,7 +10,7 @@ import SpriteKit
 
 class Screen {
 	static let cellGap    = IntPoint( x: 35, y: 31 )
-	static let cellOffset = IntPoint( x:320, y:100 )
+	static let cellOffset = IntPoint( x:310, y:100 )
 	
 	/*--------------------------------
 	MARK:	- accessor and utils

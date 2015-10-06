@@ -72,11 +72,23 @@ extension CGFloat {
 }
 
 /*--------------------------------
-MARK:	- action with key and competion block
+MARK:	- actions
 ---------------------------------*/
 extension SKNode {
 	public func runAction(action: SKAction, withKey key: String, completion block: () -> Void) {
 		let seq = SKAction.sequence([action,SKAction.runBlock(block)])
+		runAction(seq, withKey: key)
+	}
+	
+	public func runAction(action: SKAction?, withKey key: String, after sec:NSTimeInterval, completion block: () -> Void) {
+		let wait = SKAction.waitForDuration(sec)
+		var seq:SKAction;
+		let blockAction = SKAction.runBlock(block)
+		if( action != nil ) {
+			seq = SKAction.sequence([wait,action!,blockAction])
+		} else {
+			seq = SKAction.sequence([wait,blockAction])
+		}
 		runAction(seq, withKey: key)
 	}
 }

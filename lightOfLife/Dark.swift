@@ -22,8 +22,9 @@ class Dark : MapObject {
 	}
 	
 	func setBasics() {
+		type = .Dark
 		colorBlendFactor = 1
-		zPosition = 20000
+		zPosition = 11000
 	}
 	
 	override func update(stageMap: StageMap) {

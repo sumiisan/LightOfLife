@@ -8,9 +8,56 @@
 
 import SpriteKit
 
-class Atom : SKSpriteNode {
+struct HueAndSaturation {
+	var hue:CGFloat
+	var saturation:CGFloat
+	
+	func colorWithLuminosity( lum:Luminosity ) -> UIColor {
+		return UIColor(hue: hue, saturation: saturation, brightness: CGFloat(lum <= 1 ? lum : 1), alpha: 1.0)
+	}
+}
 
+typealias AtomStage = Int
+
+let AtomGrade_Wood = 5
+let AtomGrade_Stream = 6
+
+class Atom : SKSpriteNode {
 	private var luminosity_:Luminosity = 0
+	internal var grade:Int = 0
+	private var avatarPassedCount_:Int = 0
+	private var avatarPassedCount:Int {
+		get {
+			return avatarPassedCount_
+		}
+		set(c) {
+			if ( c >= 0 ) {
+				avatarPassedCount_ = c
+				grade = avatarPassedCount <= 9 ? avatarPassedCount : 9
+			}
+		}
+	}
+	
+	private let baseColors = [
+		HueAndSaturation(hue: 0.0, saturation: 0.0),		//	0:void
+		HueAndSaturation(hue: 0.2, saturation: 0.2),		//	1:path 1
+		HueAndSaturation(hue: 0.3, saturation: 0.3),		//	2:path 2
+		HueAndSaturation(hue: 0.4, saturation: 0.4),		//	3:field 1
+		HueAndSaturation(hue: 0.5, saturation: 0.4),		//	4:field 2
+		HueAndSaturation(hue: 0.6, saturation: 0.5),		//	5:wood
+		HueAndSaturation(hue: 0.7, saturation: 0.5),		//	6:stream 1
+		HueAndSaturation(hue: 0.7, saturation: 0.6),		//	7:stream 2
+		HueAndSaturation(hue: 0.7, saturation: 0.7),		//	8:stream 3
+		HueAndSaturation(hue: 0.7, saturation: 0.8),		//	9:stream 4
+	]
+	
+	func pass() {
+		++avatarPassedCount
+	}
+	
+	func degrade() {
+		--avatarPassedCount
+	}
 	
 	var luminosity:Luminosity {
 		get {
@@ -18,7 +65,7 @@ class Atom : SKSpriteNode {
 		}
 		set(lum) {
 			luminosity_ = lum
-			color = UIColor(hue: 0.0, saturation: 0.0, brightness: CGFloat(lum > 1 ? 1 : lum), alpha: 1.0)
+			color = baseColors[grade].colorWithLuminosity(lum)
 		}
 	}
 	

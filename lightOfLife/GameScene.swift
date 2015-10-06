@@ -12,6 +12,8 @@ import SpriteKit
 class GameScene : SKScene {
 	var stageMap:StageMap = StageMap()
 	var avatar:Avatar = Avatar()
+	
+	var touchedCellPosition = IntPoint(x: -999,y: -999)
 
 	
 	/*--------------------------------
@@ -51,8 +53,35 @@ class GameScene : SKScene {
 	MARK:	- interaction -
 	---------------------------------*/
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-		//processTouches(touches, withEvent: event)
+		let touch = touches.first
+		let node = nodeAtPoint(touch!.locationInNode(self))
+		if let atom:Atom = node as? Atom {
+			let ci = Screen.cellIndex(atom.position)
+			touchedCellPosition = ci
+		}
     }
+	
+	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+		checkTouchUp(touches.first!)
+	}
+	
+	override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
+		if let touch = touches?.first {
+			checkTouchUp(touch)
+		}
+	}
+	
+	func checkTouchUp(touch:UITouch) {
+		let node = nodeAtPoint(touch.locationInNode(self))
+		if let atom = node as? Atom {
+			let ci = Screen.cellIndex(atom.position)
+			if  ci == touchedCellPosition {
+				avatar.planMoveToCell(ci)
+			}
+		}
+	}
+	
+	
 	
 	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
 		processTouches(touches, withEvent: event)
@@ -77,34 +106,9 @@ class GameScene : SKScene {
 	MARK:	- update -
 	---------------------------------*/
     override func update(currentTime: CFTimeInterval) {
-		//	darken every atom
-		let width  = stageMap.mapSize.width
-		let height = stageMap.mapSize.height
-		
-		//	decay
-		for y in 0..<height {
-			for x in 0..<width {
-				
-//				stageMap.alterAtom(IntPoint(x:x,y:y), multiplier: 0.9, offset: 0)
-				var l = stageMap.cells[y][x].atom.luminosity * 0.9
-				if l > 4 {
-					l = 4
-				}
-				stageMap.cells[y][x].atom.luminosity = l
-			}
-		}
+		stageMap.processCells()
 		stageMap.saveFrameLuminosity()
-		
-		for d in stageMap.darks {
-			d.update(stageMap)
-		}
-		
-		let shuffledLights = stageMap.lights.shuffle()
-
-		for l in shuffledLights {
-			l.update(stageMap)
-		}
-		
+		stageMap.update()
 		avatar.beginFlood(stageMap)
 	}
 }
