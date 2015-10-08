@@ -12,7 +12,8 @@ enum MapObjectType {
 	case Unknown
 	case Light
 	case Dark
-	case Tree
+	case Vine
+	case Home
 }
 
 class MapObject : SKSpriteNode {
@@ -21,6 +22,14 @@ class MapObject : SKSpriteNode {
 	var mapPosition = IntPoint(x:0, y:0)
 
 	func update( stageMap:StageMap ) {
+		()
+	}
+	
+	func create() {
+		()
+	}
+	
+	func destroy() {
 		()
 	}
 

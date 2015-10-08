@@ -23,7 +23,7 @@ class StageMap {
 	/*--------------------------------
 	MARK:	- constants
 	---------------------------------*/
-	internal let mapSize = IntSize(width: 12, height: 20)
+	internal let mapSize = IntSize(width: 9, height: 18)
 	internal let maxLightCount = 5
 	internal let maxDarkCount = 10
 	
@@ -33,6 +33,7 @@ class StageMap {
 	internal var cells  = [[MapCell]]()
 	internal var lights = [Light]()
 	internal var darks  = [Dark]()
+	internal var trees  = [Vine]()
 	
 	/*--------------------------------
 	MARK:	- initialization -
@@ -53,7 +54,7 @@ class StageMap {
 		for _ in 0..<mapSize.height {
 			var row = [MapCell]()
 			for _ in 0..<mapSize.width {
-				let atom = Atom(imageNamed:"atom")
+				let atom = Atom(imageNamed:"atom2")
 				atom.luminosity = 0.0
 				row.append(MapCell(
 					atom: atom,
@@ -108,15 +109,50 @@ class StageMap {
 	func processCells() {
 		for y in 0..<mapSize.height {
 			for x in 0..<mapSize.width {
-				if( cells[y][x].decay() ) {
-					//upgrade
+				let upgradeable = cells[y][x].decay()
+				if upgradeable {
 					let neighbour = HexGrid(pos: IntPoint(x: x,y: y)).neighbour(6.randomNumber())
 					let cell = cellWithPositionRangeCheck(neighbour)
 					if cell != nil && cell!.atom.grade < AtomGrade_Wood {
 						cell!.atom.pass()
 					}
 				}
+				let grade = cells[y][x].atom.grade
+				if grade >= AtomGrade_Field && grade < AtomGrade_Stream {
+					if 600.randomNumber() == 0 {
+						//	spawn items and objects
+						let tree = spawn(MapObjectType.Vine, at:IntPoint(x: x, y: y))
+						if let spawnedVine = tree as? Vine {
+							trees.append(spawnedVine)
+							Screen.currentScene?.addObjectToScene(spawnedVine)
+							spawnedVine.create()
+						}
+					}
+				}
 			}
+		}
+	}
+	
+	func spawn(objectType:MapObjectType, at position:IntPoint ) -> MapObject? {
+		//	do not put multiple objects on a cell (for now)
+		if cells[position.y][position.x].object == nil {
+			let obj = newObjectOfType(objectType)!
+			placeMapObject(obj, at: position)
+			return obj
+		}
+		return nil
+	}
+	
+	func newObjectOfType(objectType:MapObjectType) -> MapObject? {
+		switch( objectType ) {
+		case .Light:
+			return Light()
+		case .Dark:
+			return Dark()
+		case .Vine:
+			return Vine()
+		default:
+			return nil
 		}
 	}
 	

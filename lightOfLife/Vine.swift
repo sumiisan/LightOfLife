@@ -1,5 +1,5 @@
 //
-//  Tree.swift
+//  Vine.swift
 //  lightOfLife
 //
 //  Created by sumiisan on 2015/10/07.
@@ -8,7 +8,7 @@
 
 import SpriteKit
 
-class Tree : MapObject {
+class Vine : MapObject {
 	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 		setBasics()
@@ -16,12 +16,12 @@ class Tree : MapObject {
 	
 	init() {
 		let texture = SKTexture(imageNamed: "tree")
-		super.init(texture: texture, color: UIColor.whiteColor(), size: texture.size() * 0.45)
+		super.init(texture: texture, color: UIColor.whiteColor(), size: texture.size() * 0.9)
 		setBasics()
 	}
 	
 	private func setBasics() {
-		type = .Tree
+		type = .Vine
 		colorBlendFactor = 1
 		zPosition = 20000
 	}
@@ -31,6 +31,22 @@ class Tree : MapObject {
 		let dirs = fp.directions()
 		for d in dirs {
 			stageMap.alterAtomWithPositionRangeCheck(fp.neighbour(d), multiplier: 1.1, offset: 0)	//	slower decay
+		}
+	}
+	
+	override func create() {
+		setScale(0.1)
+		let appear = SKAction.scaleTo(1.5, duration: 0.5)
+		runAction(appear, completion: { () -> Void in
+			self.setScale(1.0)
+		})
+	}
+	
+	override func destroy() {
+		StageMap.mainMap.trees.removeAtIndex(StageMap.mainMap.trees.indexOf(self)!)
+		let vanish = SKAction.scaleTo(0.1, duration: 1.0)
+		runAction(vanish) { () -> Void in
+			self.removeFromParent()
 		}
 	}
 }

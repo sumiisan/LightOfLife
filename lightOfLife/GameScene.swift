@@ -11,20 +11,27 @@ import SpriteKit
 
 class GameScene : SKScene {
 	var stageMap:StageMap = StageMap()
-	var avatar:Avatar = Avatar()
+	var fluor:Fluor = Fluor()
+	
+	var playerEnergyIndicator:BarIndicator = BarIndicator(inFrame: CGRectMake(10, 20, 300, 10))
+	var fluorEnergyIndicator:BarIndicator  = BarIndicator(inFrame: CGRectMake(10,550, 300, 10))
 	
 	var touchedCellPosition = IntPoint(x: -999,y: -999)
 
+	var player:Player?
 	
 	/*--------------------------------
 	MARK:	- initialization -
 	---------------------------------*/
+
+	
     override func didMoveToView(view: SKView) {
 		//	init atom map
 		let width  = stageMap.mapSize.width
 		let height = stageMap.mapSize.height
 		
-		avatar.mapPosition = stageMap.lights[0].mapPosition
+		Screen.currentScene = self
+		fluor.mapPosition = stageMap.lights[0].mapPosition
 		
 		for y in 0..<height {
 			for x in 0..<width {
@@ -35,18 +42,23 @@ class GameScene : SKScene {
 		}
 		
 		for light in stageMap.lights {
-			light.position = Screen.cellPosition( light.mapPosition )
-			addChild(light)
+			addObjectToScene(light)
 		}
 
 		for dark in stageMap.darks {
-			dark.position = Screen.cellPosition( dark.mapPosition )
-			addChild(dark)
+			addObjectToScene(dark)
 		}
 		
-		addChild(avatar.destinationMark)
-		addChild(avatar)
+		addChild(fluor.destinationMark)
+		addChild(fluor)
 		
+		player = Player()
+	}
+	
+	
+	func addObjectToScene( object:MapObject ) {
+		object.position = Screen.cellPosition(object.mapPosition)
+		addChild(object)
 	}
 	
 	/*--------------------------------
@@ -76,7 +88,7 @@ class GameScene : SKScene {
 		if let atom = node as? Atom {
 			let ci = Screen.cellIndex(atom.position)
 			if  ci == touchedCellPosition {
-				avatar.planMoveToCell(ci)
+				fluor.planMoveToCell(ci)
 			}
 		}
 	}
@@ -109,7 +121,7 @@ class GameScene : SKScene {
 		stageMap.processCells()
 		stageMap.saveFrameLuminosity()
 		stageMap.update()
-		avatar.beginFlood(stageMap)
+		fluor.beginFlood(stageMap)
 	}
 }
 

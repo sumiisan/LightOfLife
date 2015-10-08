@@ -33,7 +33,7 @@ struct MapCell {
 		return atom.luminosity
 	}
 	
-	internal func doesStopAvatar() -> Bool {
+	internal func doesStopFluor() -> Bool {
 		if( object != nil ) {
 			if object!.type == MapObjectType.Light {
 				return false
@@ -48,6 +48,21 @@ struct MapCell {
 	internal mutating func decay() -> Bool {
 		let l = atom.luminosity * 0.9
 		atom.luminosity = l > Preference.MaxLuminosityOfCell ? Preference.MaxLuminosityOfCell : l
+		
+		if( object != nil ) {
+			//	check grade and objects consistency
+			if( object!.type == MapObjectType.Vine ) {
+				if atom.grade == 0 {
+					object!.destroy()
+					object = nil
+				}
+				
+				if atom.grade >= AtomGrade_Stream && 600.randomNumber() == 0 {
+					object!.destroy()
+					object = nil
+				}
+			}
+		}
 		
 		/*
 		approx chance to degrade

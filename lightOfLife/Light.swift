@@ -29,7 +29,9 @@ class Light : MapObject {
 	private var covered_ = true
 	
 	internal var capacity:Double = 2.0	//	small light class
-	
+
+	private var emitter:SKEmitterNode?
+
 	/*--------------------------------
 	MARK:	- getter / setter
 	---------------------------------*/
@@ -42,14 +44,14 @@ class Light : MapObject {
 			state_ = s
 			if s == LightState.On {
 				color = UIColor.whiteColor()
-				runAction(
-					SKAction.repeatActionForever(
-						SKAction.rotateByAngle( lightSize == LightSize.Small ? -3 : -1.5, duration: 1.0)
-					), withKey: "rotate"
-				)
+			//	runAction(
+			//		SKAction.repeatActionForever(
+			//			SKAction.rotateByAngle( lightSize == LightSize.Small ? -3 : -1.5, duration: 1.0)
+			//		), withKey: "rotate"
+			//	)
 			} else {
 				color = UIColor(white: 0.1, alpha: 1.0)
-				removeActionForKey("rotate")
+			//	removeActionForKey("rotate")
 			}
 		}
 	}
@@ -60,8 +62,10 @@ class Light : MapObject {
 		}
 		set(p) {
 			power_ = p
-			let l = power > 1.0 ? 1.0 : power
-			color = UIColor(white: CGFloat(l), alpha: 1.0)
+			let l:CGFloat = power > 1.0 ? 1.0 : CGFloat(power)
+			color = UIColor(white: CGFloat(l*0.5+0.5), alpha: 1.0)
+			emitter!.particleBirthRate = CGFloat(capacity) * 20 * l
+			emitter!.alpha = l
 			if( power_ < 0.1 ) {
 				state = LightState.Off
 			}
@@ -89,7 +93,7 @@ class Light : MapObject {
 	}
 	
 	init() {
-		let texture = SKTexture(imageNamed: "light")
+		let texture = SKTexture(imageNamed: "light2")
 		super.init(texture: texture, color: UIColor.whiteColor(), size: texture.size() * 0.45)
 		setBasics()
 	}
@@ -104,6 +108,14 @@ class Light : MapObject {
 			lightSize = LightSize.Big
 			capacity = 4.0
 		}
+		
+		emitter = SKEmitterNode(fileNamed: "LightGlitter")
+		emitter!.zPosition = 100000
+		emitter!.setScale( 1.1 + CGFloat( capacity * 0.1 ) )
+		emitter!.particleBirthRate = 0
+		emitter!.alpha = 0
+
+		addChild(emitter!)
 	}
 	
 	/*--------------------------------
@@ -121,7 +133,7 @@ class Light : MapObject {
 	/*--------------------------------
 	MARK:	- interaction
 	---------------------------------*/
-
+/*
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
 		//let touch = touches.first
 		//state = state == LightStates.Off ? LightStates.On : LightStates.Off
@@ -131,7 +143,7 @@ class Light : MapObject {
 			userInfo: ["x":mapPosition.x, "y":mapPosition.y]
 		)
 	}
-
+*/
 	/*--------------------------------
 	MARK:	- action
 	---------------------------------*/

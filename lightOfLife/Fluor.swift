@@ -1,16 +1,19 @@
 //
-//  Avatar.swift
+//  Fluor.swift
 //  lightOfLife
 //
 //  Created by sumiisan on 2015/10/03.
-//  Copyright © 2015年 sumiisan. All rights reserved.
+//  Copyright © 2015 sumiisan. All rights reserved.
 //
 
 import SpriteKit
 
-class Avatar : SKSpriteNode {
+class Fluor : SKSpriteNode {
 	private var hexgrid:HexGrid = HexGrid()
 	private var destination_:IntPoint? = nil
+	
+	internal var energy:Luminosity = 0
+	
 	internal var destinationMark:SKSpriteNode = SKSpriteNode(imageNamed: "mark")
 	
 	var mapPosition:IntPoint {
@@ -44,9 +47,9 @@ class Avatar : SKSpriteNode {
 		let texture = SKTexture(imageNamed: "arrow")
 		super.init(texture: texture, color: UIColor.whiteColor(), size: texture.size() * 0.8)
 		zPosition = 40000
-		
+		/*
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("lightTapped:"), name: Notification.LightTapped.rawValue, object: nil)
-		
+		*/
 		destinationMark.hidden = true
 	}
 	
@@ -61,15 +64,16 @@ class Avatar : SKSpriteNode {
 	/*--------------------------------
 	MARK:	- interaction (message received)
 	---------------------------------*/
+	/*
 	func lightTapped(notifiation:NSNotification) {
 		planMoveToCell(IntPoint(
 			x: notifiation.userInfo!["x"]!.integerValue,
 			y: notifiation.userInfo!["y"]!.integerValue
 			))
 	}
-	
+	*/
 	/*--------------------------------
-	MARK:	- move avatar
+	MARK:	- move fluor
 	---------------------------------*/
 	internal func planMoveToCell( p:IntPoint ) {
 		destination = p
@@ -86,14 +90,14 @@ class Avatar : SKSpriteNode {
 		
 		var targetP = hexgrid.neighbour(dir)
 		var targetCell = StageMap.mainMap.cellWithPositionRangeCheck(targetP)
-		var doesStopAvatar = (targetCell != nil) ? targetCell!.doesStopAvatar() : true
+		var doesStopFluor = (targetCell != nil) ? targetCell!.doesStopFluor() : true
 
-		if doesStopAvatar {
+		if doesStopFluor {
 			targetP = hexgrid.neighbour(hexgrid.alternativeTo(dir))
 			targetCell = StageMap.mainMap.cellWithPositionRangeCheck(targetP)
 			//	try another direction
-			doesStopAvatar = (targetCell != nil) ? targetCell!.doesStopAvatar() : true
-			if doesStopAvatar {	//	wait 0.5 sec and try again
+			doesStopFluor = (targetCell != nil) ? targetCell!.doesStopFluor() : true
+			if doesStopFluor {	//	wait 0.5 sec and try again
 				runAction(nil, withKey: "move", after: 0.25, completion: { () -> Void in
 					self.moveToNextHex()
 				})

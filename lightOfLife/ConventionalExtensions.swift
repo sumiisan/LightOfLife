@@ -9,6 +9,28 @@
 import SpriteKit
 
 /*--------------------------------
+MARK:	- color with hexadecimal RGB value
+---------------------------------*/
+extension UIColor {
+	static func colorWithHex( hex:UInt32 ) -> UIColor {
+		var a = hex
+		
+		let b:CGFloat = CGFloat(a & 0xff) / 255.0
+		a >>= 8
+		let g:CGFloat = CGFloat(a & 0xff) / 255.0
+		a >>= 8
+		let r:CGFloat = CGFloat(a & 0xff) / 255.0
+		
+		return UIColor(
+			red: r,
+			green: g,
+			blue: b,
+			alpha: 1.0 )
+	}
+}
+
+
+/*--------------------------------
 MARK:	- shuffle arrays
 ---------------------------------*/
 extension CollectionType where Index == Int {

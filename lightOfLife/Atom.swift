@@ -13,27 +13,28 @@ struct HueAndSaturation {
 	var saturation:CGFloat
 	
 	func colorWithLuminosity( lum:Luminosity ) -> UIColor {
-		return UIColor(hue: hue, saturation: saturation, brightness: CGFloat(lum <= 1 ? lum : 1), alpha: 1.0)
+		return UIColor(hue: hue, saturation: saturation, brightness: CGFloat(lum <= 1 ? lum * 0.7: 0.7), alpha: 1.0)
 	}
 }
 
 typealias AtomStage = Int
 
+let AtomGrade_Field = 3
 let AtomGrade_Wood = 5
 let AtomGrade_Stream = 6
 
 class Atom : SKSpriteNode {
 	private var luminosity_:Luminosity = 0
 	internal var grade:Int = 0
-	private var avatarPassedCount_:Int = 0
-	private var avatarPassedCount:Int {
+	private var fluorPassedCount_:Int = 0
+	private var fluorPassedCount:Int {
 		get {
-			return avatarPassedCount_
+			return fluorPassedCount_
 		}
 		set(c) {
 			if ( c >= 0 ) {
-				avatarPassedCount_ = c
-				grade = avatarPassedCount <= 9 ? avatarPassedCount : 9
+				fluorPassedCount_ = c
+				grade = fluorPassedCount <= 9 ? fluorPassedCount : 9
 			}
 		}
 	}
@@ -52,11 +53,11 @@ class Atom : SKSpriteNode {
 	]
 	
 	func pass() {
-		++avatarPassedCount
+		++fluorPassedCount
 	}
 	
 	func degrade() {
-		--avatarPassedCount
+		--fluorPassedCount
 	}
 	
 	var luminosity:Luminosity {
