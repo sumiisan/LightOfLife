@@ -14,12 +14,25 @@ class BarIndicator : SKShapeNode {
 	private var currentValue_:Double = 0
 	private var displayValue:Double = 0		//	TODO:animate bar 
 	
+	private var barColor_:UIColor = UIColor.colorWithHex(0xFFFF44)
+	
+	internal var varColor:UIColor {
+		get {
+			return barColor_
+		}
+		set(c) {
+			barColor_ = c
+			bar!.fillColor = c
+		}
+	}
+	
 	var maxValue:Double = 1
 	var currentValue:Double {
 		set(v) {
 			currentValue_ = v
 			let p = CGFloat( currentValue / maxValue )
-			bar?.path = UIBezierPath( rect: CGRectMake(1, 1, p * (frame.width - 2), frame.height-2)).CGPath
+			bar!.path = UIBezierPath(
+				rect: CGRectMake(1+frame.minX, 1+frame.minY, p * (frame.width - 2), frame.height-2)).CGPath
 		}
 		get {
 			return currentValue_
@@ -29,10 +42,13 @@ class BarIndicator : SKShapeNode {
 	init( inFrame:CGRect) {
 		super.init()
 		path = UIBezierPath(rect: inFrame).CGPath
-		lineWidth = 1
-		strokeColor = UIColor.colorWithHex(0x44FF88)
-		bar = SKShapeNode.init(rect: inFrame)
-		bar!.fillColor = UIColor.colorWithHex(0x88FF44)
+		lineWidth = 0.5
+		strokeColor = UIColor.colorWithHex(0x44CC88)
+		bar = SKShapeNode.init(rect: CGRectZero)
+		zPosition = 1000000
+		bar!.fillColor = barColor_
+		bar!.strokeColor = UIColor.clearColor()
+		addChild(bar!)
 	}
 
 	required init?(coder aDecoder: NSCoder) {

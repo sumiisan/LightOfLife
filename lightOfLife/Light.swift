@@ -114,6 +114,7 @@ class Light : MapObject {
 		emitter!.setScale( 1.1 + CGFloat( capacity * 0.1 ) )
 		emitter!.particleBirthRate = 0
 		emitter!.alpha = 0
+		emitter!.userInteractionEnabled = false
 
 		addChild(emitter!)
 	}
@@ -133,17 +134,30 @@ class Light : MapObject {
 	/*--------------------------------
 	MARK:	- interaction
 	---------------------------------*/
-/*
+
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-		//let touch = touches.first
-		//state = state == LightStates.Off ? LightStates.On : LightStates.Off
+		parent!.touchesBegan(touches, withEvent: event)
+		/*
 		NSNotificationCenter.defaultCenter().postNotificationName(
 			Notification.LightTapped.rawValue,
 			object: self,
 			userInfo: ["x":mapPosition.x, "y":mapPosition.y]
 		)
-	}
 */
+	}
+
+	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+		parent!.touchesEnded(touches, withEvent: event)
+	}
+	
+	override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
+		parent!.touchesCancelled(touches, withEvent: event)
+	}
+	
+	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+		parent!.touchesMoved(touches, withEvent: event)
+	}
+
 	/*--------------------------------
 	MARK:	- action
 	---------------------------------*/

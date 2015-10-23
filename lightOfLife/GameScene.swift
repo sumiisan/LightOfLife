@@ -14,7 +14,7 @@ class GameScene : SKScene {
 	var fluor:Fluor = Fluor()
 	
 	var playerEnergyIndicator:BarIndicator = BarIndicator(inFrame: CGRectMake(10, 20, 300, 10))
-	var fluorEnergyIndicator:BarIndicator  = BarIndicator(inFrame: CGRectMake(10,550, 300, 10))
+	var fluorEnergyIndicator:BarIndicator  = BarIndicator(inFrame: CGRectMake(10,550, 300,  5))
 	
 	var touchedCellPosition = IntPoint(x: -999,y: -999)
 
@@ -31,6 +31,10 @@ class GameScene : SKScene {
 		let height = stageMap.mapSize.height
 		
 		Screen.currentScene = self
+		
+		addChild(playerEnergyIndicator)
+		addChild(fluorEnergyIndicator)
+		
 		fluor.mapPosition = stageMap.lights[0].mapPosition
 		
 		for y in 0..<height {
@@ -67,11 +71,16 @@ class GameScene : SKScene {
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
 		let touch = touches.first
 		let node = nodeAtPoint(touch!.locationInNode(self))
-		if let atom:Atom = node as? Atom {
+/*		if let atom:Atom = node as? Atom {
 			let ci = Screen.cellIndex(atom.position)
 			touchedCellPosition = ci
-		}
+		}*/
+		touchedCellPosition = Screen.cellIndex(node.position)
     }
+	
+	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+		processTouches(touches, withEvent: event)
+	}
 	
 	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
 		checkTouchUp(touches.first!)
@@ -85,27 +94,37 @@ class GameScene : SKScene {
 	
 	func checkTouchUp(touch:UITouch) {
 		let node = nodeAtPoint(touch.locationInNode(self))
-		if let atom = node as? Atom {
-			let ci = Screen.cellIndex(atom.position)
-			if  ci == touchedCellPosition {
-				fluor.planMoveToCell(ci)
-			}
+		
+		var ci:IntPoint = IntPoint(x: -99999,y: -99999)
+		
+		if let object = node as? MapObject {
+			//	touch up on object
+			ci = object.mapPosition
+		} else if let atom = node as? Atom {
+			ci = Screen.cellIndex(atom.position)
+		} else {
+			//	emitters?
+			ci = Screen.cellIndex(node.parent!.position)
 		}
+		
+		if  Screen.cellIndex(node.position) == touchedCellPosition {
+			fluor.planMoveToCell(ci)
+		}
+
 	}
 	
 	
-	
-	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-		processTouches(touches, withEvent: event)
-	}
 	
 	func processTouches(touches:Set<UITouch>, withEvent event:UIEvent?) {
 		for touch in touches {
 			let node = nodeAtPoint(touch.locationInNode(self))
 			if let atom:Atom = node as? Atom {
-				atom.luminosity = atom.luminosity < 2.0 ? atom.luminosity * 2 + 0.4 : 2.0
-				let ci = Screen.cellIndex(atom.position)
-				stageMap.uncoverObjectsAt(ci)
+				if( player!.energy > 0 ) {
+					player!.energy -= 1
+					atom.luminosity = atom.luminosity < 2.0 ? atom.luminosity * 2 + 0.4 : 2.0
+					let ci = Screen.cellIndex(atom.position)
+					stageMap.uncoverObjectsAt(ci)
+				}
 			}
 			
 		}
@@ -118,6 +137,7 @@ class GameScene : SKScene {
 	MARK:	- update -
 	---------------------------------*/
     override func update(currentTime: CFTimeInterval) {
+		player!.update(currentTime)
 		stageMap.processCells()
 		stageMap.saveFrameLuminosity()
 		stageMap.update()
