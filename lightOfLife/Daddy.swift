@@ -8,12 +8,10 @@
 
 import SpriteKit
 
-class Fluor : SKSpriteNode {
+class Daddy : Mortals {
 	private var hexgrid:HexGrid = HexGrid()
 	private var destination_:IntPoint? = nil
-	
-	internal var energy:Luminosity = 0
-	
+		
 	internal var destinationMark:SKSpriteNode = SKSpriteNode(imageNamed: "mark")
 	
 	var mapPosition:IntPoint {
@@ -79,7 +77,6 @@ class Fluor : SKSpriteNode {
 		destination = p
 		moveToNextHex()
 	}
-	
 
 	func moveToNextHex() {
 		let dir = hexgrid.quantizeDirectionTo(destination!)

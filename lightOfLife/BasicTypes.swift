@@ -11,6 +11,7 @@ import SpriteKit
 
 
 typealias Luminosity = Double
+typealias Tension = Double
 
 
 /*--------------------------------

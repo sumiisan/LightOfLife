@@ -11,7 +11,6 @@ import SpriteKit
 
 class GameScene : SKScene {
 	var stageMap:StageMap = StageMap()
-	var fluor:Fluor = Fluor()
 	
 	var playerEnergyIndicator:BarIndicator = BarIndicator(inFrame: CGRectMake(10, 20, 300, 10))
 	var fluorEnergyIndicator:BarIndicator  = BarIndicator(inFrame: CGRectMake(10,550, 300,  5))
@@ -35,7 +34,7 @@ class GameScene : SKScene {
 		addChild(playerEnergyIndicator)
 		addChild(fluorEnergyIndicator)
 		
-		fluor.mapPosition = stageMap.lights[0].mapPosition
+		Actors.daddy.mapPosition = stageMap.lights[0].mapPosition
 		
 		for y in 0..<height {
 			for x in 0..<width {
@@ -53,8 +52,8 @@ class GameScene : SKScene {
 			addObjectToScene(dark)
 		}
 		
-		addChild(fluor.destinationMark)
-		addChild(fluor)
+		addChild(Actors.daddy.destinationMark)
+		addChild(Actors.daddy)
 		
 		player = Player()
 	}
@@ -108,7 +107,7 @@ class GameScene : SKScene {
 		}
 		
 		if  Screen.cellIndex(node.position) == touchedCellPosition {
-			fluor.planMoveToCell(ci)
+			Actors.daddy.planMoveToCell(ci)
 		}
 
 	}
@@ -119,8 +118,8 @@ class GameScene : SKScene {
 		for touch in touches {
 			let node = nodeAtPoint(touch.locationInNode(self))
 			if let atom:Atom = node as? Atom {
-				if( player!.energy > 0 ) {
-					player!.energy -= 1
+				if( Actors.daddy.energy > 0 ) {
+					Actors.daddy.energy -= 1
 					atom.luminosity = atom.luminosity < 2.0 ? atom.luminosity * 2 + 0.4 : 2.0
 					let ci = Screen.cellIndex(atom.position)
 					stageMap.uncoverObjectsAt(ci)
@@ -128,9 +127,6 @@ class GameScene : SKScene {
 			}
 			
 		}
-		
-		
-		
 	}
 		
 	/*--------------------------------
@@ -138,10 +134,13 @@ class GameScene : SKScene {
 	---------------------------------*/
     override func update(currentTime: CFTimeInterval) {
 		player!.update(currentTime)
+		
+		playerEnergyIndicator.currentValue = Actors.daddy.energy
+
 		stageMap.processCells()
 		stageMap.saveFrameLuminosity()
 		stageMap.update()
-		fluor.beginFlood(stageMap)
+		Actors.daddy.beginFlood(stageMap)
 	}
 }
 

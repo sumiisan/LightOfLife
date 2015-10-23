@@ -40,8 +40,7 @@ class Vine : MapObject {
 		runAction(appear, completion: { () -> Void in
 			self.setScale(1.0)
 		})
-		
-		Screen.currentScene!.player!.energy += 10
+		Actors.daddy.energy += 10
 	}
 	
 	override func destroy() {
