@@ -42,9 +42,13 @@ class Daddy : Mortals {
 	}
 	
 	init() {
-		let texture = SKTexture(imageNamed: "arrow")
+		let texture = SKTexture(imageNamed: "fluor")
 		super.init(texture: texture, color: UIColor.whiteColor(), size: texture.size() * 0.8)
 		zPosition = 40000
+		
+		maxEnergy = 1000			//	TODO: charge energy when the first fluor is born
+		energy = maxEnergy			//	TODO: charge energy when the first fluor is born
+
 		/*
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("lightTapped:"), name: Notification.LightTapped.rawValue, object: nil)
 		*/
@@ -150,7 +154,7 @@ class Daddy : Mortals {
 			let p = fp.neighbour(d)
 			if stageMap.positionIsInsideMap(p) {
 				if stageMap.cell(p).luminosity() < 0.5 {
-					stageMap.alterAtom(p, multiplier: 1.111111, offset: 0.005)
+					stageMap.alterAtom(p, multiplier: 1.111111, offset: 0.01)
 				}
 			}
 		}

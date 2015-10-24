@@ -23,7 +23,11 @@ MARK:	- instance vars -
 			return energy_
 		}
 		set(e) {
-			energy_ = e
+			if ( e < maxEnergy ) {
+				energy_ = e
+			} else {
+				energy_ = maxEnergy
+			}
 		}
 	}
 	var maxEnergy:Luminosity = 1000		//	happiness capacity

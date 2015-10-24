@@ -103,7 +103,11 @@ class GameScene : SKScene {
 			ci = Screen.cellIndex(atom.position)
 		} else {
 			//	emitters?
-			ci = Screen.cellIndex(node.parent!.position)
+			if let parent = node.parent {
+				ci = Screen.cellIndex(parent.position)
+			} else {
+				return
+			}
 		}
 		
 		if  Screen.cellIndex(node.position) == touchedCellPosition {
@@ -134,7 +138,7 @@ class GameScene : SKScene {
 	---------------------------------*/
     override func update(currentTime: CFTimeInterval) {
 		player!.update(currentTime)
-		
+		playerEnergyIndicator.maxValue = Actors.daddy.maxEnergy
 		playerEnergyIndicator.currentValue = Actors.daddy.energy
 
 		stageMap.processCells()
