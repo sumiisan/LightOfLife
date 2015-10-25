@@ -11,11 +11,9 @@ import SpriteKit
 class Player {
 	private static var singleton:Player = Player()
 	
-	
 	func update(currentTime: CFTimeInterval) {
 		let daddy = Actors.daddy
 		daddy.energy += ( daddy.maxEnergy * 0.0001 )
-		
 	}
 	
 	

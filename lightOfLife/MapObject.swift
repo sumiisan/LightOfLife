@@ -12,7 +12,7 @@ enum MapObjectType {
 	case Unknown
 	case Light
 	case Dark
-	case Vine
+	case Plant
 	case Home
 }
 

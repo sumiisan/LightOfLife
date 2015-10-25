@@ -43,8 +43,9 @@ class Daddy : Mortals {
 	
 	init() {
 		let texture = SKTexture(imageNamed: "fluor")
-		super.init(texture: texture, color: UIColor.whiteColor(), size: texture.size() * 0.8)
+		super.init(texture: texture, color: UIColor(hue: 0.6, saturation: 0.5, brightness: 1.0, alpha: 1.0), size: texture.size() * 0.8)
 		zPosition = 40000
+		colorBlendFactor = 1.0
 		
 		maxEnergy = 1000			//	TODO: charge energy when the first fluor is born
 		energy = maxEnergy			//	TODO: charge energy when the first fluor is born
@@ -114,9 +115,8 @@ class Daddy : Mortals {
 		
 		runAction(moveAction, withKey: "move") { () -> Void in
 			self.hexgrid.position = targetP
-			self.moveToNextHex()
-			
 			self.checkObjectUnderMyFeets()
+			self.performSelector(Selector("moveToNextHex"), withObject: nil, afterDelay: 0.5)	//	this is daddy's normal speed
 		}
 	
 	}
@@ -144,6 +144,11 @@ class Daddy : Mortals {
 		}
 	}
 	
+	override func update(currentTime: CFTimeInterval) {
+		super.update(currentTime)
+		beginFlood(StageMap.mainMap)
+	}
+	
 	func beginFlood(stageMap: StageMap) {
 		stageMap.alterAtom(mapPosition, multiplier: 1.01, offset: 0.1)
 		
@@ -154,7 +159,7 @@ class Daddy : Mortals {
 			let p = fp.neighbour(d)
 			if stageMap.positionIsInsideMap(p) {
 				if stageMap.cell(p).luminosity() < 0.5 {
-					stageMap.alterAtom(p, multiplier: 1.111111, offset: 0.01)
+					stageMap.alterAtom(p, multiplier: 1.111111, offset: 0.02)
 				}
 			}
 		}

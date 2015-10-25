@@ -33,7 +33,13 @@ MARK:	- instance vars -
 	var maxEnergy:Luminosity = 1000		//	happiness capacity
 	var tension:Tension = 0.5			//	how excited he is		0...1
 	
+	var baseSize:Double = 0.7			//	daddy
+	private var sinPhase:Double = 0
 	
+	func update(currentTime: CFTimeInterval) {
+		sinPhase += tension * 0.15
+		setScale(CGFloat(sin(sinPhase) * 0.1 + baseSize))
+	}
 	
 	
 	

@@ -104,11 +104,12 @@ class Light : MapObject {
 		state = LightState.Off
 		covered = true
 		zPosition = 10000
+		/*	PENDING: big lights
 		if 4.randomNumber() == 0 {
 			lightSize = LightSize.Big
 			capacity = 4.0
 		}
-		
+		*/
 		emitter = SKEmitterNode(fileNamed: "LightGlitter")
 		emitter!.zPosition = 100000
 		emitter!.setScale( 1.1 + CGFloat( capacity * 0.1 ) )
@@ -164,7 +165,7 @@ class Light : MapObject {
 	override func update( stageMap:StageMap ) {
 		if state == .On {
 			power -= 0.001
-			let fp = FloodPointer(inPosition: mapPosition, inDirection:6, inStrength: (power > 1 ? 1.0 : power ) )
+			let fp = FloodPointer(inPosition: mapPosition, inDirection:6, inStrength: (power > 1.5 ? 1.5 : power ) )
 			stageMap.cells[mapPosition.y][mapPosition.x].atom.luminosity = 1.0
 			flood( stageMap, floodPointerList: [fp] )
 		} else if covered {

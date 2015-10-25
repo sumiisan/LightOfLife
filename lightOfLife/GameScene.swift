@@ -144,7 +144,7 @@ class GameScene : SKScene {
 		stageMap.processCells()
 		stageMap.saveFrameLuminosity()
 		stageMap.update()
-		Actors.daddy.beginFlood(stageMap)
+		Actors.daddy.update(currentTime)
 	}
 }
 

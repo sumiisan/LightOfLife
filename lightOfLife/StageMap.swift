@@ -24,16 +24,16 @@ class StageMap {
 	MARK:	- constants
 	---------------------------------*/
 	internal let mapSize = IntSize(width: 9, height: 18)
-	internal let maxLightCount = 5
-	internal let maxDarkCount = 10
-	
+	internal let maxLightCount = 1
+	internal let maxDarkCount =  1
+
 	/*--------------------------------
 	MARK:	- objects
 	---------------------------------*/
 	internal var cells  = [[MapCell]]()
 	internal var lights = [Light]()
 	internal var darks  = [Dark]()
-	internal var trees  = [Vine]()
+	internal var plants  = [Plant]()
 	
 	/*--------------------------------
 	MARK:	- initialization -
@@ -66,6 +66,8 @@ class StageMap {
 			cells.append(row)
 		}
 		
+		
+/*
 		for _ in 0..<maxLightCount {
 			let light = Light()
 			placeMapObject(light, at: searchUnreservedCellWithMargin( 2 ))
@@ -77,9 +79,13 @@ class StageMap {
 			placeMapObject(dark, at: searchUnreservedCellWithMargin( 1 ))
 			darks.append(dark)
 		}
+*/
+		
+		
 		
 		lights[0].touch()	//	turn first light on
 		lights[0].covered = false
+
 	}
 	
 	/*-------------------------------------------
@@ -121,11 +127,11 @@ class StageMap {
 				if grade >= AtomGrade_Field && grade < AtomGrade_Stream {
 					if 600.randomNumber() == 0 {
 						//	spawn items and objects
-						let tree = spawn(MapObjectType.Vine, at:IntPoint(x: x, y: y))
-						if let spawnedVine = tree as? Vine {
-							trees.append(spawnedVine)
-							Screen.currentScene?.addObjectToScene(spawnedVine)
-							spawnedVine.create()
+						let tree = spawn(MapObjectType.Plant, at:IntPoint(x: x, y: y))
+						if let spawnedPlant = tree as? Plant {
+							plants.append(spawnedPlant)
+							Screen.currentScene?.addObjectToScene(spawnedPlant)
+							spawnedPlant.create()
 						}
 					}
 				}
@@ -149,8 +155,8 @@ class StageMap {
 			return Light()
 		case .Dark:
 			return Dark()
-		case .Vine:
-			return Vine()
+		case .Plant:
+			return Plant()
 		default:
 			return nil
 		}
@@ -169,6 +175,10 @@ class StageMap {
 	func update() {
 		for d in darks {
 			d.update(self)
+		}
+		
+		for p in plants {
+			p.update(self)
 		}
 		
 		let shuffledLights = lights.shuffle()

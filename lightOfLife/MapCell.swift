@@ -51,7 +51,7 @@ struct MapCell {
 		
 		if( object != nil ) {
 			//	check grade and objects consistency
-			if( object!.type == MapObjectType.Vine ) {
+			if( object!.type == MapObjectType.Plant ) {
 				if atom.grade == 0 {
 					object!.destroy()
 					object = nil
